@@ -1,8 +1,13 @@
 import React from 'react'
+import Game from './Game'
 
 class Container extends React.Component {
     render() {
-        return <div>Hello React</div>;
+        return (
+            <div>
+                <Game rows={5} columns={5} />
+            </div>
+        )
     }
 }
 
