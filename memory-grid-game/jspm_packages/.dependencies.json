@@ -260,5 +260,6 @@
     "react": "npm:react@^16.0.0",
     "process": "github:jspm/nodelibs-process@^0.1.0",
     "stream": "github:jspm/nodelibs-stream@^0.1.0"
-  }
+  },
+  "npm:lodash@4.17.10": {}
 }
