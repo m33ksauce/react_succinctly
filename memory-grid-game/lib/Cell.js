@@ -26,7 +26,7 @@ class Cell extends React.Component {
     
     render() {
         let className = "cell";
-        if (this.props.gameState === "memorize" && this.active()) {
+        if (this.props.showActiveCells && this.active()) {
             className += " active";
         }
 

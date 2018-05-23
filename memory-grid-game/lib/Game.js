@@ -32,30 +32,43 @@ class Game extends React.Component {
     }
 
     recordGuess({ cellId, userGuessIsCorrect }) {
-        let { wrongGuesses, correctGuesses } = this.state;
+        let { wrongGuesses, correctGuesses, gameState } = this.state;
 
         if (userGuessIsCorrect) {
             correctGuesses.push(cellId);
+            if (correctGuesses.length === this.props.activeCellCounts) {
+                gameState = 'won';
+            }
         } else {
             wrongGuesses.push(cellId);
+            if (wrongGuesses.length > this.props.allowedWrongAttempts) {
+                gameState = 'lost';
+            }
         }
 
-        this.setState({ correctGuesses, wrongGuesses });
+        this.setState({ correctGuesses, wrongGuesses, gameState });
     }
 
     render() {
+        let showActiveCells =  ["memorize", "lost"].indexOf(this.state.gameState) >= 0;
         return (
             <div className="grid">
                 {this.matrix.map((row, ri) => (
                     <Row key={ri}>
-                        {row.map(cellId => <Cell key={cellId} id={cellId} activeCells={this.activeCells}
+                        {row.map(cellId => <Cell key={cellId} id={cellId} 
+                            showActiveCells={showActiveCells} activeCells={this.activeCells}
                             recordGuess={this.recordGuess.bind(this)} {...this.state} />)}
                     </Row>
                 ))}
-                <Footer {...this.state} />
+                <Footer {...this.state} 
+                    activeCellsCount={this.props.activeCellCounts}/>
             </div>
         );
     }
+}
+
+Game.defaultProps = {
+    allowedWrongAttempts: 2
 }
 
 export default Game;
