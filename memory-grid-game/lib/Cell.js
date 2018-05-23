@@ -6,11 +6,21 @@ class Cell extends React.Component {
     }
 
     handleClick() {
-        if (this.props.gameState === "recall") {
+        if (this.guessState() === undefined &&
+                this.props.gameState === "recall") {
             this.props.recordGuess({
                 cellId: this.props.id,
                 userGuessIsCorrect: this.active()                
             });
+        }
+    }
+
+    guessState() {
+        if (this.props.correctGuesses.indexOf(this.props.id) >= 0) {
+            return true;
+        }
+        if (this.props.wrongGuesses.indexOf(this.props.id) >= 0) {
+            return false;
         }
     }
     
@@ -19,6 +29,8 @@ class Cell extends React.Component {
         if (this.props.gameState === "memorize" && this.active()) {
             className += " active";
         }
+
+        className += " guess-" + this.guessState();
 
         return (
             <div className={className} onClick={this.handleClick.bind(this)}>
