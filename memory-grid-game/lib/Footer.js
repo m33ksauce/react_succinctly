@@ -18,6 +18,21 @@ class Footer extends React.Component {
         )
     }
 
+    handleClick() {
+        this.props.setGameState('ready');
+    }
+
+    playGame() {
+        if (["won", "lost"].indexOf(this.props.gameState) >= 0) {
+            return (
+                <div className="playAgain">
+                    <button onClick={this.handleClick.bind(this)}>Play Again</button>
+                </div>
+            )
+        }
+        return  null;
+    }
+
     render() {
         return (
             <div className="footer">
@@ -25,6 +40,7 @@ class Footer extends React.Component {
                     {this.props.hints[this.props.gameState]}...
                 </div>
                 {this.remainingCount()}
+                {this.playGame()}
             </div>
         );
     }

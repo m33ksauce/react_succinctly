@@ -19,22 +19,23 @@ class Game extends React.Component {
         let flatMatrix = _.flatten(this.matrix);
         this.activeCells = _.sampleSize(flatMatrix, this.props.activeCellCounts);
 
-        this.state = { 
+        this.readyState = { 
             gameState: 'ready',
             wrongGuesses: [],
             correctGuesses: [],
             timeRemaining: this.props.allowedGuessTimeSeconds
         };
+        this.state = this.readyState;
     }
 
     componentDidMount() {
-        setTimeout(() => this.setState({ gameState: 'memorize' }), 2000);
+        setTimeout(() => this.setGameState('memorize'), 2000);
         setTimeout(() => {
-            this.setState({ gameState: 'recall' });
+            this.setGameState('recall');
             this.gameTimer = setInterval(() => {
                 console.log(this.state.timeRemaining);
                 if (this.state.gameState === 'recall' && this.state.timeRemaining <= 0) {
-                    this.setState({ gameState: 'lost' });
+                    this.setGameState('lost');
                 }
                 this.setState({ timeRemaining: this.state.timeRemaining - 1 });
             }, 1000);
@@ -44,6 +45,28 @@ class Game extends React.Component {
     componentDidUpdate() {
         if (this.gameTimer != undefined && (this.state.timeRemaining < 0 || this.state.gameState === 'won')) {
             clearInterval(this.gameTimer);
+        }
+    }
+
+    setGameState(newGameState) {
+        switch(newGameState) {
+            case 'ready':
+                this.setState(this.readyState);
+                break;
+            case 'memorize':
+                this.setState({ gameState: 'memorize' });
+                break;
+            case 'recall':
+                this.setState({ gameState: 'recall' });
+                break;
+            case 'won':
+                this.setState({ gameState: 'won' });
+                break;
+            case 'lost':
+                this.setState({ gameState: 'lost' });
+                break;
+            default:
+                break;
         }
     }
 
@@ -78,7 +101,8 @@ class Game extends React.Component {
                 ))}
                 <Footer {...this.state} 
                     activeCellsCount={this.props.activeCellCounts}
-                    timeRemaining={this.state.timeRemaining}/>
+                    timeRemaining={this.state.timeRemaining}
+                    setGameState={this.setGameState}/>
             </div>
         );
     }
