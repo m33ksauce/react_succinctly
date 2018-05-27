@@ -8,22 +8,26 @@ class Game extends React.Component {
     constructor(props) {
         super(props);
 
-        this.readyState = { 
+        this.state = this.readyState();
+    }
+
+    readyState() { 
+        return {
             gameState: 'ready',
             wrongGuesses: [],
             correctGuesses: [],
-            timeRemaining: this.props.allowedGuessTimeSeconds
-        };
-        this.state = this.readyState;
-        this.setupNewGame();
-    }
+            timeRemaining: this.props.allowedGuessTimeSeconds,
+            activeCells: []
+        }
+    };
 
-    componentDidMount() {
+    componentWillMount() {
+        this.setupNewGame();
         this.startNewGame();
     }
 
     componentDidUpdate() {
-        if (this.gameTimer != undefined && (this.state.timeRemaining < 0 || this.state.gameState === 'won')) {
+        if (this.gameTimer != undefined && (this.state.timeRemaining < 0 || ["won", "lost"].indexOf(this.state.gameState) >= 0)) {
             clearInterval(this.gameTimer);
         }
     }
@@ -35,11 +39,11 @@ class Game extends React.Component {
                 {this.matrix.map((row, ri) => (
                     <Row key={ri}>
                         {row.map(cellId => <Cell key={cellId} id={cellId} 
-                            showActiveCells={showActiveCells} activeCells={this.activeCells}
+                            showActiveCells={showActiveCells} activeCells={this.state.activeCells}
                             recordGuess={this.recordGuess.bind(this)} {...this.state} />)}
                     </Row>
                 ))}
-                <Footer {...this.state} 
+                <Footer {...this.state}
                     activeCellsCount={this.props.activeCellCounts}
                     timeRemaining={this.state.timeRemaining}
                     setGameState={this.setGameState.bind(this)}/>
@@ -59,17 +63,14 @@ class Game extends React.Component {
         }
 
         let flatMatrix = _.flatten(this.matrix);
-        this.activeCells = _.sampleSize(flatMatrix, this.props.activeCellCounts);
-        console.log(this.activeCells);
+        this.setState({ activeCells: _.sampleSize(flatMatrix, this.props.activeCellCounts )} );
     }
 
     startNewGame() {
-        //this.setGameState('ready');
         setTimeout(() => this.setGameState('memorize'), 2000);
         setTimeout(() => {
             this.setGameState('recall');
             this.gameTimer = setInterval(() => {
-                console.log(this.state.timeRemaining);
                 if (this.state.gameState === 'recall' && this.state.timeRemaining <= 0) {
                     this.setGameState('lost');
                 }
@@ -81,10 +82,9 @@ class Game extends React.Component {
     setGameState(newGameState) {
         switch(newGameState) {
             case 'ready':
-                this.setState(this.readyState);
+                this.setState(this.readyState());
                 this.setupNewGame();
                 this.startNewGame();
-                console.log(this.correctGuesses)
                 break;
             case 'memorize':
                 this.setState({ gameState: 'memorize' });

@@ -25,7 +25,6 @@ class Cell extends React.Component {
     }
     
     render() {
-        console.log("we rendering")
         let className = "cell";
         if (this.props.showActiveCells && this.active()) {
             className += " active";
