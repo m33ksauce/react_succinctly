@@ -6,8 +6,14 @@ class Footer extends React.Component {
             return null; 
         }
         return (
-            <div className="remaining-count">
-                {this.props.activeCellsCount - this.props.correctGuesses.length}
+            <div>
+                <div className="remaining-count">
+                    Remaining guesses: {this.props.activeCellsCount - this.props.correctGuesses.length}
+                </div>
+                <br />
+                <div className="reamingin-time">
+                    {this.props.timeRemaining} seconds left to guess!
+                </div>
             </div>
         )
     }

@@ -22,13 +22,29 @@ class Game extends React.Component {
         this.state = { 
             gameState: 'ready',
             wrongGuesses: [],
-            correctGuesses: []
+            correctGuesses: [],
+            timeRemaining: this.props.allowedGuessTimeSeconds
         };
     }
 
     componentDidMount() {
         setTimeout(() => this.setState({ gameState: 'memorize' }), 2000);
-        setTimeout(() => this.setState({ gameState: 'recall' }), 4000);
+        setTimeout(() => {
+            this.setState({ gameState: 'recall' });
+            this.gameTimer = setInterval(() => {
+                console.log(this.state.timeRemaining);
+                if (this.state.gameState === 'recall' && this.state.timeRemaining <= 0) {
+                    this.setState({ gameState: 'lost' });
+                }
+                this.setState({ timeRemaining: this.state.timeRemaining - 1 });
+            }, 1000);
+        }, 4000);
+    }
+
+    componentDidUpdate() {
+        if (this.gameTimer != undefined && (this.state.timeRemaining < 0 || this.state.gameState === 'won')) {
+            clearInterval(this.gameTimer);
+        }
     }
 
     recordGuess({ cellId, userGuessIsCorrect }) {
@@ -61,14 +77,16 @@ class Game extends React.Component {
                     </Row>
                 ))}
                 <Footer {...this.state} 
-                    activeCellsCount={this.props.activeCellCounts}/>
+                    activeCellsCount={this.props.activeCellCounts}
+                    timeRemaining={this.state.timeRemaining}/>
             </div>
         );
     }
 }
 
 Game.defaultProps = {
-    allowedWrongAttempts: 2
+    allowedWrongAttempts: 2,
+    allowedGuessTimeSeconds: 10
 }
 
 export default Game;
