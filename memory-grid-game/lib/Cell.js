@@ -25,12 +25,15 @@ class Cell extends React.Component {
     }
     
     render() {
+        console.log("we rendering")
         let className = "cell";
         if (this.props.showActiveCells && this.active()) {
             className += " active";
         }
-
-        className += " guess-" + this.guessState();
+        
+        if (["recall", "won", "lost"].indexOf(this.props.gameState) >= 0) {
+            className += " guess-" + this.guessState();
+        }
 
         return (
             <div className={className} onClick={this.handleClick.bind(this)}>
